@@ -1,25 +1,39 @@
-#alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "]
 
 def encryptText():
     textInputConfirmed = "N"
     keyInputConfirmed = "N"
+    newAlphabet = []
+    newText = ""
+
     while textInputConfirmed.lower() != "y":
         inputText = input('Please enter the the text to be encrypted: ')
         print("Text to be encrypted: ", inputText)
-        textInputConfirmed = input('Please check the entered text, Continue? y/n: ')
+        textInputConfirmed = "y"
     
     while keyInputConfirmed.lower() != "y":
-        key = input('Please enter the encryption key: ')
+        key = int(input('Please enter the encryption key: '))
         print("Selected key: ", key)
-        keyInputConfirmed = input('Please check the entered key, Continue? y/n: ')
+        keyInputConfirmed = "y"
     
-        
+    
+
     for i in range(len(inputText)):
         char = inputText[i]
-        charLocation = ord(char)
-        print(chr(charLocation), "ord: ", charLocation)
+        print(alphabet.index(char))
 
-def selectionHandler():                                                                         #Starting function to choose the selected 
+        newCharLocation = int(alphabet.index(char) + key)
+        if newCharLocation > len(alphabet):
+            newCharLocation = newCharLocation - len(alphabet)
+        print(newCharLocation)
+        print(alphabet[newCharLocation])
+        newAlphabet.insert(i, newCharLocation)
+        
+    for i in range(len(newAlphabet)):
+        print(newAlphabet[i])
+   
+
+def selectionHandler():                                                                         #Starting function to select the desired option
     chosenOption = 0
     while chosenOption not in [1,2,3]:
         print("Option 1: Encrypt readable text with key")
