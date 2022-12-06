@@ -1,5 +1,5 @@
 alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "]
-
+ 
 def encryptText():
     textInputConfirmed = "N"
     keyInputConfirmed = "N"
@@ -31,8 +31,10 @@ def encryptText():
         print(alphabet[newCharLocation])
         newAlphabet.insert(i, (alphabet[newCharLocation]))
         
-    newText = ''.join(str(newAlphabet))
-    print(newText)
+    print(newAlphabet)
+    newText = "".join(newAlphabet)
+    
+    print("Final encrypted text: ", newText)
  
    
 
@@ -52,9 +54,9 @@ def selectionHandler():                                                         
 
 
 #Main code start
-
-option = selectionHandler()
-if option == 1:
-    encryptText()
+while True:
+    option = selectionHandler()
+    if option == 1:
+        encryptText()
 
 
