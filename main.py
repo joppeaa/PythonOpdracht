@@ -55,8 +55,6 @@ def selectionHandler():                                                         
     return chosenOption
 
 
-
-
 #Main code start
 while True:
     option = selectionHandler()
