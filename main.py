@@ -4,8 +4,7 @@ def encryptText():
     textInputConfirmed = "N"
     keyInputConfirmed = "N"
     newAlphabet = []
-    newText = ""
-
+    
     while textInputConfirmed.lower() != "y":
         inputText = input('Please enter the the text to be encrypted: ')
         print("Text to be encrypted: ", inputText)
@@ -25,12 +24,16 @@ def encryptText():
         newCharLocation = int(alphabet.index(char) + key)
         if newCharLocation > len(alphabet):
             newCharLocation = newCharLocation - len(alphabet)
+        elif newCharLocation < 0:
+            newCharLocation = (len(alphabet) + newCharLocation)
+        
         print(newCharLocation)
         print(alphabet[newCharLocation])
-        newAlphabet.insert(i, newCharLocation)
+        newAlphabet.insert(i, (alphabet[newCharLocation]))
         
-    for i in range(len(newAlphabet)):
-        print(newAlphabet[i])
+    newText = ''.join(str(newAlphabet))
+    print(newText)
+ 
    
 
 def selectionHandler():                                                                         #Starting function to select the desired option
