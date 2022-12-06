@@ -7,21 +7,20 @@ def encryptText():
     
     while True:
         try:
-            inputText = input('Please enter the the text to be encrypted: ')                            #Receiving the original text to be encrypted
+            inputText = input('Please enter the the text to be encrypted: ')                            #Receiving the original text to be encrypted, keep looping until valid text is entered
             #print("Text to be encrypted: ", inputText)
             #print("Selected key: ", key)
             for i in range(len(inputText)):                                                             #Getting the length of the input-text and looping over each character in this range
                 char = inputText[i].lower()
                 if char not in alphabet:
                     raise TypeError("Only character from alphabet allowed")
- 
             break
         except:
-            ("Please enter a text with valid character included in the normal alphabet range")
+            print("Please enter text with valid characters included in the normal alphabet range")
     
-    while True:
+    while True:                                                                                         #Receiving the encryption key/offset, keep looping untill int value is entered
         try:
-            key = int(input('Please enter the encryption key: '))                                   #Receiving the encryption key/offset
+            key = int(input('Please enter the encryption key: '))                                   
             break
         except:
             print("Please enter a integer value")
@@ -32,19 +31,28 @@ def encryptText():
         print(alphabet.index(char))
 
         newCharLocation = int(alphabet.index(char) + key)                                       #Appying the key-offset to the characters
-        if newCharLocation > len(alphabet):
+        
+        print("lengthAlphabet: ", len(alphabet))
+        print("NewCharLocation: ", newCharLocation)
+
+        if newCharLocation > (len(alphabet) - 1):
             newCharLocation = newCharLocation - len(alphabet)
         elif newCharLocation < 0:
-            newCharLocation = (len(alphabet) + newCharLocation)
+            newCharLocation = ((len(alphabet) - 1) + newCharLocation)
         
         print(newCharLocation)
         print(alphabet[newCharLocation])
         newAlphabet.insert(i, (alphabet[newCharLocation]))                                      #Filling a list with the new characters
         
     print(newAlphabet)
-    newText = "".join(newAlphabet)                                                              #Combining the previous list into a single string  
+    encryptedText = "".join(newAlphabet)                                                              #Combining the previous list into a single string  
     
-    print("Final encrypted text: ", newText)
+    
+    print("Final encrypted text: ", encryptedText)
+    print(inputText)
+    print("↓" * len(inputText))
+    print(encryptedText)
+
     print("Moving back to the selection menu")
  
 def decryptText():
