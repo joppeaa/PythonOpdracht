@@ -1,15 +1,12 @@
 alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "]
- 
+previouslyEncryptedText = ''
+
 def encryptText():
-    
     print("Encrypting option selected")
-    newAlphabet = []
-    
+
     while True:
         try:
             inputText = input('Please enter the the text to be encrypted: ')                            #Receiving the original text to be encrypted, keep looping until valid text is entered
-            #print("Text to be encrypted: ", inputText)
-            #print("Selected key: ", key)
             for i in range(len(inputText)):                                                             #Getting the length of the input-text and looping over each character in this range
                 char = inputText[i].lower()
                 if char not in alphabet:
@@ -24,8 +21,54 @@ def encryptText():
             break
         except:
             print("Please enter a integer value")
+    encryptedText = shiftText(key, inputText)
+    print("EncryptedText: ", encryptedText)
+    print("Moving back to the selection menu")
 
+def decryptText():
+    print("Decrypting option selected")
+    print("Printing from decrypt: ", previouslyEncryptedText)
+    if previouslyEncryptedText:
+        while True:
+            usePreviouslyEncryptedText = input("Previously encrypted text detected, would you like to import this? y/n ")
+            if usePreviouslyEncryptedText.lower() in ["y","n"]:
+                break
+            else:
+                print("Please enter y or n to continue")
+        if usePreviouslyEncryptedText.lower() == "y":
+            inputText = previouslyEncryptedText
+            userInputRequired = False
+        else:
+            userInputRequired = True
+    else:
+        userInputRequired = True
 
+    if userInputRequired:
+
+        while True:
+            inputText = input('Please enter the the text to be decrypted: ')                            #Receiving the original text to be encrypted, keep looping until valid text is entered
+            badCharacterDetected = False
+            for i in range(len(inputText)):                                                             #Getting the length of the input-text and looping over each character in this range
+                char = inputText[i].lower()
+                if char not in alphabet:
+                    badCharacterDetected = True
+                
+            if badCharacterDetected == False:
+                break
+            else:
+                print("Please enter text with valid characters included in the normal alphabet range")
+    
+    while True:                                                                                         #Receiving the encryption key/offset, keep looping untill int value is entered
+        try:
+            key = int(input('Please enter the encryption key: '))                                   
+            break
+        except:
+            print("Please enter a integer value")
+    decryptedText = shiftText((-1*key), inputText)
+    print("DecryptedText: ", decryptedText)
+            
+def shiftText(key, inputText):
+    newAlphabet = []
     for i in range(len(inputText)):                                                             #Getting the length of the input-text and looping over each character in this range
         char = inputText[i].lower()
         print(alphabet.index(char))
@@ -44,22 +87,18 @@ def encryptText():
         print(alphabet[newCharLocation])
         newAlphabet.insert(i, (alphabet[newCharLocation]))                                      #Filling a list with the new characters
         
-    print(newAlphabet)
+    #print(newAlphabet)
     encryptedText = "".join(newAlphabet)                                                              #Combining the previous list into a single string  
-    
     
     print("Final encrypted text: ", encryptedText)
     print(inputText)
     print("↓" * len(inputText))
     print(encryptedText)
+    global previouslyEncryptedText
+    previouslyEncryptedText = encryptedText
+    return(encryptedText)
 
-    print("Moving back to the selection menu")
- 
-def decryptText():
-
-    print("Decrypting option selected")
     
-
 def findKey():
     print("Finding key option selected")
 
@@ -86,6 +125,7 @@ def selectionHandler():                                                         
 
 #Main code start
 while True:
+    print("Printing from global prevencryptedtext: ", previouslyEncryptedText)
     option = selectionHandler()
     if option == 1:
         encryptText()
