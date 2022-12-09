@@ -25,12 +25,14 @@ def encryptText():
             break
         except:
             print("Please enter a integer value")
+    print("Encrypting..........")
     encryptedText = shiftText(key, inputText)                                                                           #Calling shiftText function to encrypt the text
     global previouslyEncryptedText                      
     previouslyEncryptedText = encryptedText                                                                             #Storing encrypted text in global variable in order to use it in the decryption option
 
     #print("EncryptedText: ", encryptedText)
-    input("\nPress enter to return to the selection menu: ")
+    input("\nPress enter to return to the selection menu → ")
+    print("\n"*3)
 
 def decryptText():
     print("Decrypting option selected")
@@ -72,9 +74,11 @@ def decryptText():
             break
         except:
             print("***Please enter a integer value***")
+    print("Decrypting..........")
     decryptedText = shiftText((-1*key), inputText)
-    print("DecryptedText: ", decryptedText)
-    input("\nPress enter to return to the selection menu: ")
+    #print("DecryptedText: ", decryptedText)
+    input("\nPress enter to return to the selection menu → ")
+    print("\n"*3)
             
 def shiftText(key, inputText):                                                                                          #Function to shift the text in the alphabet in order to de- or encrypt the text
     newCharLocationAfterCorrection = 0
@@ -89,7 +93,7 @@ def shiftText(key, inputText):                                                  
     else:
         newkey = key
 
-    print("Newkey: ",newkey)
+    #print("Newkey: ",newkey)
 
     for i in range(len(inputText)):                                                                                     #Getting the length of the input-text and looping over each character in this range
         char = inputText[i].lower()
@@ -147,7 +151,7 @@ def selectionHandler():                                                         
     return chosenOption
 
 #Main code start
-while True:
+while True:                                                                                                             #Main loop
     option = selectionHandler()
     if option == 1:
         encryptText()
