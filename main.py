@@ -2,6 +2,10 @@
 #Supervisor: H.Yu
 #Course: Intelligent Control: CU04448
 
+import pprint
+
+pp = pprint.PrettyPrinter(sort_dicts=False)
+
 alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "]
 previouslyEncryptedText = ''
 
@@ -29,7 +33,10 @@ def encryptText():
     encryptedText = shiftText(key, inputText)                                                                           #Calling shiftText function to encrypt the text
     global previouslyEncryptedText                      
     previouslyEncryptedText = encryptedText                                                                             #Storing encrypted text in global variable in order to use it in the decryption option
-
+    
+    print(inputText)
+    print("↓" * len(inputText))
+    print(encryptedText)
     #print("EncryptedText: ", encryptedText)
     input("\nPress enter to return to the selection menu → ")
     print("\n"*3)
@@ -38,7 +45,7 @@ def decryptText():
     print("Decrypting option selected")
     
     if previouslyEncryptedText:                                                                                         #Checking if the is encrypted text stored in the global variable
-        print("Previously encrypted text: ", previouslyEncryptedText)
+        print("Previously encrypted text:", previouslyEncryptedText)
         while True:
             usePreviouslyEncryptedText = input("Previously encrypted text detected, would you like to import this? y/n ")   #Checking if user wants to use previously encrypted text
             if usePreviouslyEncryptedText.lower() in ["y","n"]:                                         
@@ -77,6 +84,10 @@ def decryptText():
     print("Decrypting..........")
     decryptedText = shiftText((-1*key), inputText)
     #print("DecryptedText: ", decryptedText)
+    print(inputText)
+    print("↓" * len(inputText))
+    print(decryptedText)
+
     input("\nPress enter to return to the selection menu → ")
     print("\n"*3)
             
@@ -119,18 +130,69 @@ def shiftText(key, inputText):                                                  
     encryptedText = "".join(newAlphabet)                                                                                #Combining the previous list into a single string  
     
     #print("Final encrypted text: ", encryptedText)
-    print(inputText)
-    print("↓" * len(inputText))
-    print(encryptedText)
+
     return(encryptedText)
 
     
 def findKey():
+    
+    keyResults = {}
+     
+    for i in range(1, len(alphabet)):                                                                                   #Generating nested dictionary to store tried keys and their results
+        keyResults[f'key{i}'] = {}
+        for j in alphabet: 
+            keyResults[f'key{i}'][f'{j}count'] = 0
+               
+    letterFrequency = {
+        "a" : 8.2, "b" : 1.5, "c" : 2.8, "d" : 4.3,
+        "e" : 13, "f" : 2.2, "g" : 2, "h" : 6.1,
+        "i" : 7, "j" : 0.15, "k" : 0.77, "l" : 4,
+        "m" : 2.4, "n" : 6.7, "o" : 7.5, "p" : 1.9,
+        "q" : 0.095, "r" : 6, "s" : 6.3, "t" : 9.1,
+        "u" : 2.8, "v" : 0.98, "w" : 2.4, "x" : 0.15,
+        "y" : 2, "z" : 0.074
+    }
+    
+    print(letterFrequency["z"])
+    
     print("Finding key option selected")
+    print("Gathering probability of possible keys....")
+    
+    while True:
+        try:
+            inputText = input('Please enter the the text to be decrypted: ')                                            #Receiving the original text to be decrypted, keep looping until valid text is entered
+            for i in range(len(inputText)):                                                                             #Getting the length of the input-text and looping over each character in this range
+                char = inputText[i].lower()
+                if char not in alphabet:
+                    raise TypeError("Only character from alphabet allowed")
+            break
+        except:
+            print("Please enter text with valid characters included in the normal alphabet range")
+
+    inputTextLength = len(inputText.replace(" ", ""))
+    print(inputTextLength)
+
+    for i in range(1, len(alphabet)):
+        keyResults[f'key{i}'] = {}
+        inputText = shiftText(1, inputText)
+        keyResults[f'key{i}']['result'] = inputText
+
+        for j in alphabet: 
+            keyResults[f'key{i}'][f'{j}count'] = inputText.count(j)
+       
+
+    
+    
+
+
+
+    pp.pprint(keyResults)
+
+    quit()
 
 def customCipher():
     print("Custom substituion cipher option selected")
-
+    print("ha")
 
 def selectionHandler():                                                                                                 #Starting function to select the desired option
     print('\033[1m' + '\nWelcome to the caesar cipher solver by: Joppe Aarnoutse, Floris Wondergem, and Joël David')   
