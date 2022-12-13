@@ -3,6 +3,7 @@
 #Course: Intelligent Control: CU04448
 
 import pprint
+from copy import deepcopy
 
 pp = pprint.PrettyPrinter(sort_dicts=False)
 
@@ -136,13 +137,18 @@ def shiftText(key, inputText):                                                  
     
 def findKey():
     
+    alphabetWithoutSpace = deepcopy(alphabet)
+    alphabetWithoutSpace.pop(26)
+    print(alphabetWithoutSpace)
+
     keyResults = {}
      
     for i in range(1, len(alphabet)):                                                                                   #Generating nested dictionary to store tried keys and their results
         keyResults[f'key{i}'] = {}
+        keyResults[f'key{i}']['percentageError'] = ''
         for j in alphabet: 
             keyResults[f'key{i}'][f'{j}count'] = 0
-               
+                           
     letterFrequency = {
         "a" : 8.2, "b" : 1.5, "c" : 2.8, "d" : 4.3,
         "e" : 13, "f" : 2.2, "g" : 2, "h" : 6.1,
@@ -157,6 +163,7 @@ def findKey():
     
     print("Finding key option selected")
     print("Gathering probability of possible keys....")
+    print(alphabet)
     
     while True:
         try:
@@ -172,23 +179,42 @@ def findKey():
     inputTextLength = len(inputText.replace(" ", ""))
     print(inputTextLength)
 
-    for i in range(1, len(alphabet)):
+    for i in reversed(range(1, len(alphabet))):                                                                                   #looping over every possible key
         keyResults[f'key{i}'] = {}
         inputText = shiftText(1, inputText)
         keyResults[f'key{i}']['result'] = inputText
-
-        for j in alphabet: 
+        percentageError = 0
+        
+        for j in alphabetWithoutSpace: 
             keyResults[f'key{i}'][f'{j}count'] = inputText.count(j)
-       
+            percentageError = percentageError + ((((keyResults[f'key{i}'][f'{j}count'] / inputTextLength)*100) - letterFrequency[j]) / letterFrequency[j])
+            
+        keyResults[f'key{i}']['percentageError'] = abs(percentageError)
+
+        
 
     
-    
+        #item binnen
+        #checken we percentage
+        #als eerste is voegen we hem gewoon toe aan de lijst
+        #Checken we of percentage groter is dan het laatste 
 
+
+    # pp.pprint(keyResults)
+
+    keyResults = sorted(keyResults.items(), key=joppeSort, reverse=True).pop()
 
 
     pp.pprint(keyResults)
+    print("Key found:", keyResults[0])
+    print("Solution found:", keyResults[1]["result"])
+
 
     quit()
+
+def joppeSort(item):
+    return item[1]['percentageError']
+
 
 def customCipher():
     print("Custom substituion cipher option selected")
