@@ -10,7 +10,6 @@ pp = pprint.PrettyPrinter(sort_dicts=False)
 alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 previouslyEncryptedText = ''
 
-
 def getInputText(messageToDisplay):
     
     while True:
@@ -22,7 +21,6 @@ def getInputText(messageToDisplay):
                 return inputText
         except TypeError as e:
             print(e)
-
 
 def encryptText():
     
@@ -54,11 +52,11 @@ def decryptText():
         print("Previously encrypted text:", previouslyEncryptedText)
         while True:
             usePreviouslyEncryptedText = input("Previously encrypted text detected, would you like to import this? y/n ")   #Checking if user wants to use previously encrypted text
-            if usePreviouslyEncryptedText.lower() in ["y","n"]:                                         
+            if usePreviouslyEncryptedText.lower() in ["y","n"]:                                                         
                 break
             else:
                 print("Please enter y or n to continue")
-        if usePreviouslyEncryptedText.lower() == "y":
+        if usePreviouslyEncryptedText.lower() == "y":                                                                   #Use of previously encrypted text, no user input required 
             inputText = previouslyEncryptedText
             userInputRequired = False
         else:
@@ -66,8 +64,7 @@ def decryptText():
     else:
         userInputRequired = True
 
-    if userInputRequired:
-
+    if userInputRequired:                                                                                               #Not using previously encrypted text, so getting text to decrypt
         getInputText("Please enter te text to be decrypted: ")
     
     while True: 
@@ -98,33 +95,26 @@ def shiftText(key, inputText):                                                  
     else:
         newkey = key
 
-
-
     for i in range(len(inputText)):                                                                                     #Getting the length of the input-text and looping over each character in this range
         char = inputText[i].lower()
       
         if char in alphabet:
             newCharLocation = int(alphabet.index(char) + newkey)
-              #print("lengthAlphabet: ", len(alphabet))
-            #print("NewCharLocation: ", newCharLocation)
         
-            if newCharLocation > (len(alphabet) - 1):                                                                       #Handling for when the index reaches the edges of the list
+            if newCharLocation > (len(alphabet) - 1):                                                                   #Handling for when the index reaches the edges of the list
                 newCharLocationAfterCorrection = newCharLocation - len(alphabet)
             elif newCharLocation < 0:
                 newCharLocationAfterCorrection = (len(alphabet) + newCharLocation)
             else:
                 newCharLocationAfterCorrection = newCharLocation
         
-            #print("newCharLocAfterCorrection: ", newCharLocationAfterCorrection)
-            #print(alphabet[newCharLocationAfterCorrection])
             newAlphabet.insert(i, (alphabet[newCharLocationAfterCorrection]))  
             
-            
-                                                                        #Appying the key-offset to the characters
+
         else:
-             newAlphabet.insert(i, char)
+             newAlphabet.insert(i, char)                                                                                #Inserting special character into the new alphabet
         
-                                                   #Filling a list with the new characters
+
         
     encryptedText = "".join(newAlphabet)                                                                                #Combining the previous list into a single string  
     
@@ -133,18 +123,15 @@ def shiftText(key, inputText):                                                  
     
 def findKey():
     
-    # alphabetWithoutSpace = deepcopy(alphabet)
-    # alphabetWithoutSpace.pop(26)
-    # print(alphabetWithoutSpace)
-
     keyResults = {}
      
     for i in range(1, len(alphabet)):                                                                                   #Generating nested dictionary to store tried keys and their results
-        keyResults[f'key{i}'] = {}
-        keyResults[f'key{i}']['percentageError'] = ''
-        for j in alphabet: 
-            keyResults[f'key{i}'][f'{j}count'] = 0
-                           
+        keyResults[f'key{i}'] = {}                                                                                      #key1:
+        keyResults[f'key{i}']['percentageError'] = ''                                                                           #acount = ""
+        for j in alphabet:                                                                                                      #result = ""
+            keyResults[f'key{i}'][f'{j}count'] = 0                                                                              #percentageError = ""       etc.....
+                                                                                                                            
+
     letterFrequency = {                                                                                                 #List of nominal letter frequency in the english language, wikipedia.
         "a" : 8.2, "b" : 1.5, "c" : 2.8, "d" : 4.3,
         "e" : 13, "f" : 2.2, "g" : 2, "h" : 6.1,
@@ -154,52 +141,70 @@ def findKey():
         "u" : 2.8, "v" : 0.98, "w" : 2.4, "x" : 0.15,
         "y" : 2, "z" : 0.074
     }
-    
-    #print(letterFrequency["z"])
-    
-    print("Finding key option selected")
-    
-    #print(alphabet)
-    
-    inputText = getInputText("Please enter the encrypted text to be hacked: ")
+       
+    print("Finding key option selected")   
 
-    inputTextLength = len(inputText.replace(" ", ""))
-    print(inputTextLength)
+    if previouslyEncryptedText:                                                                                         #Checking if the is encrypted text stored in the global variable
+        print("Previously encrypted text:", previouslyEncryptedText)
+        while True:
+            usePreviouslyEncryptedText = input("Previously encrypted text detected, would you like to import this? y/n ")   #Checking if user wants to use previously encrypted text
+            if usePreviouslyEncryptedText.lower() in ["y","n"]:                                                         
+                break
+            else:
+                print("Please enter y or n to continue")
+        if usePreviouslyEncryptedText.lower() == "y":                                                                   #Use of previously encrypted text, no user input required 
+            inputText = previouslyEncryptedText
+            userInputRequired = False
+        else:
+            userInputRequired = True
+    else:
+        userInputRequired = True
+    
+    if userInputRequired:
+        inputText = getInputText("Please enter the encrypted text to be hacked: ")                                      #Getting the encrypted text to be hacked
 
-    for i in reversed(range(1, len(alphabet))):                                                                                   #looping over every possible key
+    inputTextLength = len(inputText)                                                                                    #Getting the total amount of characters in the text for frequency calculation
+    
+    for i in reversed(range(1, len(alphabet))):                                                                         #looping over every possible key (1-26)
         keyResults[f'key{i}'] = {}
-        inputText = shiftText(1, inputText)
-        keyResults[f'key{i}']['result'] = inputText
-        percentageError = 0
+        inputText = shiftText(1, inputText)                                                                             #shifting text one place = key + 1
+        keyResults[f'key{i}']['result'] = inputText                                                                     #storing the text result for that key
+        percentageError = 0                                                                                             #resetting the percentageError every loop
         
-        for j in alphabet: 
-            keyResults[f'key{i}'][f'{j}count'] = inputText.count(j)
-            percentageError = percentageError + ((((keyResults[f'key{i}'][f'{j}count'] / inputTextLength)*100) - letterFrequency[j]) / letterFrequency[j])
+        for j in alphabet:                                                                                              #looping over every letter in the alphabet
+            keyResults[f'key{i}'][f'{j}count'] = inputText.count(j)                                                     #counting the amount of total instances of that letter
+            percentageError = percentageError + ((((keyResults[f'key{i}'][f'{j}count'] / inputTextLength)*100) \
+                 - letterFrequency[j]) / letterFrequency[j])                                                            #Calculating the letter frequency and comparing this to the nominal english language frequency
             
-        keyResults[f'key{i}']['percentageError'] = (percentageError)
+        keyResults[f'key{i}']['percentageError'] = (percentageError)                                                    #Storing the percentageError for every tried key
 
-    #pp.pprint(keyResults)
         
-    sortedKeyResults = sorted(keyResults.items(), key=joppeSort, reverse=True)
+    sortedKeyResults = sorted(keyResults.items(), key=joppeSort, reverse=True)                                          #Sorting the results by the percentageError item from Low to HIGH
 
-    top1Results = sortedKeyResults.pop()  
-    top2Results = sortedKeyResults.pop()
+    top1Results = sortedKeyResults.pop()                                                                                #Popping out the first result and storing it in a new variable * 4        
+    top2Results = sortedKeyResults.pop()                                                                            
     top3Results = sortedKeyResults.pop()
     top4Results = sortedKeyResults.pop()
     
+    #Printing the most probable keys and their result
+    formattedPlace1 = '{:>2} {:>3} {:>1} {:>4} {:>5} {:>5} {:>50}'.format("---","Top1:", "Score:", round(top1Results[1]["percentageError"], 2), top1Results[0], "result:", top1Results[1]["result"])
+    formattedPlace2 = '{:>2} {:>3} {:>1} {:>4} {:>5} {:>5} {:>50}'.format("---","Top2:", "Score:", round(top2Results[1]["percentageError"], 2), top2Results[0], "result:", top2Results[1]["result"])
+    formattedPlace3 = '{:>2} {:>3} {:>1} {:>4} {:>5} {:>5} {:>50}'.format("---","Top3:", "Score:", round(top3Results[1]["percentageError"], 2), top3Results[0], "result:", top3Results[1]["result"])
+    formattedPlace4 = '{:>2} {:>3} {:>1} {:>4} {:>5} {:>5} {:>50}'.format("---","Top4:", "Score:", round(top4Results[1]["percentageError"], 2), top4Results[0], "result:", top4Results[1]["result"])
     print("\nFinal solution: ")
-    print("     Top1: ", top1Results[0], ",\tresult:", top1Results[1]["result"])
-    
-    print("\nIf the solution is not correct, the text length may have been too short to represent the nominal english text letter frequency")
-    print("Three most probable alternative solutions:")
-    
-    print("     Top2: ", top2Results[0], ",\tresult:", top2Results[1]["result"])
-    print("     Top3: ", top3Results[0], ",\tresult:", top3Results[1]["result"])
-    print("     Top4: ", top4Results[0], ",\tresult:", top4Results[1]["result"])
-    
-    quit()
+    print(formattedPlace1)
 
-def joppeSort(item):
+    print("\nIf the solution is not correct, the text length may have been too short to represent the nominal english text letter frequency")
+    print("\nThree most probable alternative solutions:")
+    print(formattedPlace2)
+    print(formattedPlace3)
+    print(formattedPlace4)
+    
+    input("\nPress enter to return to the selection menu → ")
+    print("\n"*3)
+    
+   
+def joppeSort(item):                                                                                                    #Function to sort by percentageError
     return item[1]['percentageError']
 
 
