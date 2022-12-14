@@ -7,23 +7,29 @@ from copy import deepcopy
 
 pp = pprint.PrettyPrinter(sort_dicts=False)
 
-alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " "]
+alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 previouslyEncryptedText = ''
 
-def encryptText():
-    print("Encrypting option selected")
 
+def getInputText(messageToDisplay):
+    
     while True:
         try:
-            inputText = input('Please enter the the text to be encrypted: ')                                            #Receiving the original text to be encrypted, keep looping until valid text is entered
-            for i in range(len(inputText)):                                                                             #Getting the length of the input-text and looping over each character in this range
-                char = inputText[i].lower()
-                if char not in alphabet:
-                    raise TypeError("Only character from alphabet allowed")
-            break
-        except:
-            print("Please enter text with valid characters included in the normal alphabet range")
+            inputText = input(messageToDisplay)
+            if not inputText:
+                raise TypeError("Please enter valid text")
+            else:
+                return inputText
+        except TypeError as e:
+            print(e)
+
+
+def encryptText():
     
+    print("Encrypting option selected")
+    inputText = getInputText("Please enter the text to be encrypted: ")
+    
+            
     while True:                                                                                                         
         try:
             key = int(input('Please enter the encryption key: '))                                                       #Receiving the encryption key/offset, keep looping untill int value is entered
@@ -38,7 +44,6 @@ def encryptText():
     print(inputText)
     print("↓" * len(inputText))
     print(encryptedText)
-    #print("EncryptedText: ", encryptedText)
     input("\nPress enter to return to the selection menu → ")
     print("\n"*3)
 
@@ -63,18 +68,7 @@ def decryptText():
 
     if userInputRequired:
 
-        while True:
-            inputText = input('Please enter the the text to be decrypted: ')                                            #Receiving the text to be decrypted
-            badCharacterDetected = False                
-            for i in range(len(inputText)):                                                                             
-                char = inputText[i].lower()
-                if char not in alphabet:
-                    badCharacterDetected = True
-                
-            if badCharacterDetected == False:
-                break
-            else:
-                print("Please enter text with valid characters included in the normal alphabet range")
+        getInputText("Please enter te text to be decrypted: ")
     
     while True: 
         try:                                                                                                       
@@ -84,7 +78,7 @@ def decryptText():
             print("***Please enter a integer value***")
     print("Decrypting..........")
     decryptedText = shiftText((-1*key), inputText)
-    #print("DecryptedText: ", decryptedText)
+    
     print(inputText)
     print("↓" * len(inputText))
     print(decryptedText)
@@ -95,8 +89,7 @@ def decryptText():
 def shiftText(key, inputText):                                                                                          #Function to shift the text in the alphabet in order to de- or encrypt the text
     newCharLocationAfterCorrection = 0
     newAlphabet = []
-    #newkey = 0
-    
+      
     if key > len(alphabet):
         newkey = (key % len(alphabet))
         
@@ -105,41 +98,44 @@ def shiftText(key, inputText):                                                  
     else:
         newkey = key
 
-    #print("Newkey: ",newkey)
+
 
     for i in range(len(inputText)):                                                                                     #Getting the length of the input-text and looping over each character in this range
         char = inputText[i].lower()
-        #print(alphabet.index(char))
-
-        newCharLocation = int(alphabet.index(char) + newkey)                                                            #Appying the key-offset to the characters
+      
+        if char in alphabet:
+            newCharLocation = int(alphabet.index(char) + newkey)
+              #print("lengthAlphabet: ", len(alphabet))
+            #print("NewCharLocation: ", newCharLocation)
         
-        #print("lengthAlphabet: ", len(alphabet))
-        #print("NewCharLocation: ", newCharLocation)
+            if newCharLocation > (len(alphabet) - 1):                                                                       #Handling for when the index reaches the edges of the list
+                newCharLocationAfterCorrection = newCharLocation - len(alphabet)
+            elif newCharLocation < 0:
+                newCharLocationAfterCorrection = (len(alphabet) + newCharLocation)
+            else:
+                newCharLocationAfterCorrection = newCharLocation
         
-        if newCharLocation > (len(alphabet) - 1):                                                                       #Handling for when the index reaches the edges of the list
-            newCharLocationAfterCorrection = newCharLocation - len(alphabet)
-        elif newCharLocation < 0:
-            newCharLocationAfterCorrection = (len(alphabet) + newCharLocation)
+            #print("newCharLocAfterCorrection: ", newCharLocationAfterCorrection)
+            #print(alphabet[newCharLocationAfterCorrection])
+            newAlphabet.insert(i, (alphabet[newCharLocationAfterCorrection]))  
+            
+            
+                                                                        #Appying the key-offset to the characters
         else:
-            newCharLocationAfterCorrection = newCharLocation
+             newAlphabet.insert(i, char)
         
-        #print("newCharLocAfterCorrection: ", newCharLocationAfterCorrection)
-        #print(alphabet[newCharLocationAfterCorrection])
-        newAlphabet.insert(i, (alphabet[newCharLocationAfterCorrection]))                                               #Filling a list with the new characters
+                                                   #Filling a list with the new characters
         
-    #print(newAlphabet)
     encryptedText = "".join(newAlphabet)                                                                                #Combining the previous list into a single string  
     
-    #print("Final encrypted text: ", encryptedText)
-
     return(encryptedText)
 
     
 def findKey():
     
-    alphabetWithoutSpace = deepcopy(alphabet)
-    alphabetWithoutSpace.pop(26)
-    print(alphabetWithoutSpace)
+    # alphabetWithoutSpace = deepcopy(alphabet)
+    # alphabetWithoutSpace.pop(26)
+    # print(alphabetWithoutSpace)
 
     keyResults = {}
      
@@ -149,7 +145,7 @@ def findKey():
         for j in alphabet: 
             keyResults[f'key{i}'][f'{j}count'] = 0
                            
-    letterFrequency = {
+    letterFrequency = {                                                                                                 #List of nominal letter frequency in the english language, wikipedia.
         "a" : 8.2, "b" : 1.5, "c" : 2.8, "d" : 4.3,
         "e" : 13, "f" : 2.2, "g" : 2, "h" : 6.1,
         "i" : 7, "j" : 0.15, "k" : 0.77, "l" : 4,
@@ -159,22 +155,13 @@ def findKey():
         "y" : 2, "z" : 0.074
     }
     
-    print(letterFrequency["z"])
+    #print(letterFrequency["z"])
     
     print("Finding key option selected")
-    print("Gathering probability of possible keys....")
-    print(alphabet)
     
-    while True:
-        try:
-            inputText = input('Please enter the the text to be decrypted: ')                                            #Receiving the original text to be decrypted, keep looping until valid text is entered
-            for i in range(len(inputText)):                                                                             #Getting the length of the input-text and looping over each character in this range
-                char = inputText[i].lower()
-                if char not in alphabet:
-                    raise TypeError("Only character from alphabet allowed")
-            break
-        except:
-            print("Please enter text with valid characters included in the normal alphabet range")
+    #print(alphabet)
+    
+    inputText = getInputText("Please enter the encrypted text to be hacked: ")
 
     inputTextLength = len(inputText.replace(" ", ""))
     print(inputTextLength)
@@ -185,31 +172,31 @@ def findKey():
         keyResults[f'key{i}']['result'] = inputText
         percentageError = 0
         
-        for j in alphabetWithoutSpace: 
+        for j in alphabet: 
             keyResults[f'key{i}'][f'{j}count'] = inputText.count(j)
             percentageError = percentageError + ((((keyResults[f'key{i}'][f'{j}count'] / inputTextLength)*100) - letterFrequency[j]) / letterFrequency[j])
             
-        keyResults[f'key{i}']['percentageError'] = abs(percentageError)
+        keyResults[f'key{i}']['percentageError'] = (percentageError)
 
+    #pp.pprint(keyResults)
         
+    sortedKeyResults = sorted(keyResults.items(), key=joppeSort, reverse=True)
 
+    top1Results = sortedKeyResults.pop()  
+    top2Results = sortedKeyResults.pop()
+    top3Results = sortedKeyResults.pop()
+    top4Results = sortedKeyResults.pop()
     
-        #item binnen
-        #checken we percentage
-        #als eerste is voegen we hem gewoon toe aan de lijst
-        #Checken we of percentage groter is dan het laatste 
-
-
-    # pp.pprint(keyResults)
-
-    keyResults = sorted(keyResults.items(), key=joppeSort, reverse=True).pop()
-
-
-    pp.pprint(keyResults)
-    print("Key found:", keyResults[0])
-    print("Solution found:", keyResults[1]["result"])
-
-
+    print("\nFinal solution: ")
+    print("     Top1: ", top1Results[0], ",\tresult:", top1Results[1]["result"])
+    
+    print("\nIf the solution is not correct, the text length may have been too short to represent the nominal english text letter frequency")
+    print("Three most probable alternative solutions:")
+    
+    print("     Top2: ", top2Results[0], ",\tresult:", top2Results[1]["result"])
+    print("     Top3: ", top3Results[0], ",\tresult:", top3Results[1]["result"])
+    print("     Top4: ", top4Results[0], ",\tresult:", top4Results[1]["result"])
+    
     quit()
 
 def joppeSort(item):
